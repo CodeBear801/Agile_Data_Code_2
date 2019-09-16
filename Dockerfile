@@ -14,13 +14,22 @@ RUN apt-get update && \
 RUN apt-get install -y software-properties-common debconf-utils && \
     add-apt-repository -y ppa:webupd8team/java && \
     apt-get update && \
-    echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections && \
-    apt-get install -y oracle-java8-installer
-ENV JAVA_HOME=/usr/lib/jvm/java-8-oracle
+    apt-get install -y openjdk-8-jdk 
+
+#echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections && \
+#echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections && \
+#echo "debconf shared/accepted-oracle-license-v1-1 seen true" | debconf-set-selections && \
+#RUN echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections
+#RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" > /etc/apt/sources.list.d/webupd8team-java-trusty.list
+#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
+#RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes --no-install-recommends oracle-java8-installer && apt-get clean all
+
+#ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 # Download and install Anaconda Python
-ADD http://repo.continuum.io/archive/Anaconda3-4.2.0-Linux-x86_64.sh /tmp/Anaconda3-4.2.0-Linux-x86_64.sh
-RUN bash /tmp/Anaconda3-4.2.0-Linux-x86_64.sh -b -p /root/anaconda
+ADD http://repo.continuum.io/archive/Anaconda3-5.2.0-Linux-x86_64.sh /tmp/Anaconda3-5.2.0-Linux-x86_64.sh
+RUN bash /tmp/Anaconda3-5.2.0-Linux-x86_64.sh -b -p /root/anaconda
 ENV PATH="/root/anaconda/bin:$PATH"
 
 #
@@ -36,9 +45,9 @@ WORKDIR /root
 #
 # Install Hadoop: may need to update this link... see http://hadoop.apache.org/releases.html
 #
-ADD http://apache.osuosl.org/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz /tmp/hadoop-2.7.3.tar.gz
+ADD http://apache.osuosl.org/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz /tmp/hadoop-2.7.7.tar.gz
 RUN mkdir -p /root/hadoop && \
-    tar -xvf /tmp/hadoop-2.7.3.tar.gz -C hadoop --strip-components=1
+    tar -xvf /tmp/hadoop-2.7.7.tar.gz -C hadoop --strip-components=1
 ENV HADOOP_HOME=/root/hadoop
 ENV PATH=$PATH:$HADOOP_HOME/bin
 ENV HADOOP_CLASSPATH=/root/hadoop/etc/hadoop/:/root/hadoop/share/hadoop/common/lib/*:/root/hadoop/share/hadoop/common/*:/root/hadoop/share/hadoop/hdfs:/root/hadoop/share/hadoop/hdfs/lib/*:/root/hadoop/share/hadoop/hdfs/*:/root/hadoop/share/hadoop/yarn/lib/*:/root/hadoop/share/hadoop/yarn/*:/root/hadoop/share/hadoop/mapreduce/lib/*:/root/hadoop/share/hadoop/mapreduce/*:/root/hadoop/etc/hadoop:/root/hadoop/share/hadoop/common/lib/*:/root/hadoop/share/hadoop/common/*:/root/hadoop/share/hadoop/hdfs:/root/hadoop/share/hadoop/hdfs/lib/*:/root/hadoop/share/hadoop/hdfs/*:/root/hadoop/share/hadoop/yarn/lib/*:/root/hadoop/share/hadoop/yarn/*:/root/hadoop/share/hadoop/mapreduce/lib/*:/root/hadoop/share/hadoop/mapreduce/*:/root/hadoop/contrib/capacity-scheduler/*.jar:/root/hadoop/contrib/capacity-scheduler/*.jar
@@ -47,9 +56,9 @@ ENV HADOOP_CONF_DIR=/root/hadoop/etc/hadoop
 #
 # Install Spark: may need to update this link... see http://spark.apache.org/downloads.html
 #
-ADD http://d3kbcqa49mib13.cloudfront.net/spark-2.1.0-bin-without-hadoop.tgz /tmp/spark-2.1.0-bin-without-hadoop.tgz
+ADD http://d3kbcqa49mib13.cloudfront.net/spark-2.1.1-bin-without-hadoop.tgz /tmp/spark-2.1.1-bin-without-hadoop.tgz
 RUN mkdir -p /root/spark && \
-    tar -xvf /tmp/spark-2.1.0-bin-without-hadoop.tgz -C spark --strip-components=1
+    tar -xvf /tmp/spark-2.1.1-bin-without-hadoop.tgz -C spark --strip-components=1
 ENV SPARK_HOME=/root/spark
 ENV HADOOP_CONF_DIR=/root/hadoop/etc/hadoop/
 ENV SPARK_DIST_CLASSPATH=/root/hadoop/etc/hadoop/:/root/hadoop/share/hadoop/common/lib/*:/root/hadoop/share/hadoop/common/*:/root/hadoop/share/hadoop/hdfs:/root/hadoop/share/hadoop/hdfs/lib/*:/root/hadoop/share/hadoop/hdfs/*:/root/hadoop/share/hadoop/yarn/lib/*:/root/hadoop/share/hadoop/yarn/*:/root/hadoop/share/hadoop/mapreduce/lib/*:/root/hadoop/share/hadoop/mapreduce/*:/root/hadoop/etc/hadoop:/root/hadoop/share/hadoop/common/lib/*:/root/hadoop/share/hadoop/common/*:/root/hadoop/share/hadoop/hdfs:/root/hadoop/share/hadoop/hdfs/lib/*:/root/hadoop/share/hadoop/hdfs/*:/root/hadoop/share/hadoop/yarn/lib/*:/root/hadoop/share/hadoop/yarn/*:/root/hadoop/share/hadoop/mapreduce/lib/*:/root/hadoop/share/hadoop/mapreduce/*:/root/hadoop/contrib/capacity-scheduler/*.jar:/root/hadoop/contrib/capacity-scheduler/*.jar
@@ -71,10 +80,19 @@ RUN cp /root/spark/conf/log4j.properties.template /root/spark/conf/log4j.propert
 #
 # Install Mongo, Mongo Java driver, and mongo-hadoop and start MongoDB
 #
-RUN echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.4.list
+RUN apt-key list
+#RUN rm /etc/apt/sources.list.d/mongodb*.list
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+RUN echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.4.list
 RUN apt-get update && \
-    apt-get install -y --allow-unauthenticated mongodb-org && \
+    apt-get install -y --allow-unauthenticated mongodb && \
     mkdir -p /data/db
+
+#RUN apt-key list | grep "expired: " | sed -ne 's|pub .*/\([^ ]*\) .*|\1|gp' | xargs -n1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys && \
+#    apt-get update && \
+#    apt-get install -y --allow-unauthenticated mongodb-org && \
+#    mkdir -p /data/db
+
 # apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6 && \
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log
 
@@ -134,7 +152,7 @@ RUN echo "spark.jars /root/Agile_Data_Code_2/lib/mongo-hadoop-spark-1.5.2.jar,/r
 #
 # Install and setup Kafka
 #
-ADD http://www-us.apache.org/dist/kafka/0.10.1.1/kafka_2.11-0.10.1.1.tgz /tmp/kafka_2.11-0.10.1.1.tgz
+ADD https://archive.apache.org/dist/kafka/0.11.0.3/kafka_2.11-0.11.0.3.tgz /tmp/kafka_2.11-0.10.1.1.tgz
 RUN mkdir -p /root/kafka && \
     tar -xvzf /tmp/kafka_2.11-0.10.1.1.tgz -C kafka --strip-components=1 && \
     rm -f /tmp/kafka_2.11-0.10.1.1.tgz
@@ -160,7 +178,7 @@ RUN pip install airflow && \
 # Install and setup Zeppelin
 #
 WORKDIR /root
-ADD http://www-us.apache.org/dist/zeppelin/zeppelin-0.6.2/zeppelin-0.6.2-bin-all.tgz /tmp/zeppelin-0.6.2-bin-all.tgz
+ADD http://archive.apache.org/dist/zeppelin/zeppelin-0.6.2/zeppelin-0.6.2-bin-all.tgz /tmp/zeppelin-0.6.2-bin-all.tgz
 RUN mkdir -p /root/zeppelin && \
     tar -xvzf /tmp/zeppelin-0.6.2-bin-all.tgz -C zeppelin --strip-components=1 && \
     rm -f /tmp/zeppelin-0.6.2-bin-all.tgz
