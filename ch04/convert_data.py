@@ -5,6 +5,9 @@ on_time_dataframe = spark.read.format('com.databricks.spark.csv')\
     treatEmptyValuesAsNulls='true',
   )\
   .load('data/On_Time_On_Time_Performance_2015.csv.bz2')
+
+#
+
 on_time_dataframe.registerTempTable("on_time_performance")
 
 trimmed_cast_performance = spark.sql("""
