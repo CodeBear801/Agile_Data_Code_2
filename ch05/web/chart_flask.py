@@ -242,7 +242,7 @@ def flights_per_airplane(tail_number):
 def flights_per_airplane_v2(tail_number):
   flights = client.agile_data_science.flights_per_airplane.find_one({'TailNum': tail_number})
   descriptions = client.agile_data_science.flights_per_airplane_v2.find_one({'TailNum': tail_number})
-  print(descriptions['Description'])
+  #print(descriptions['Description'])
   if descriptions is None:
     descriptions = []
   images = client.agile_data_science.airplane_images.find_one({'TailNum': tail_number})
@@ -250,7 +250,7 @@ def flights_per_airplane_v2(tail_number):
     images = []
 
   
-  return render_template('flights_per_airplane.html', flights=flights, images=images, descriptions=descriptions['Description'], tail_number=tail_number)
+  return render_template('flights_per_airplane.html', flights=flights, images=images, descriptions=descriptions, tail_number=tail_number)
 
 if __name__ == "__main__":
   app.run(
