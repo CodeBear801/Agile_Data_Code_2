@@ -1,3 +1,9 @@
+from pyspark.context import SparkContext
+from pyspark.sql.session import SparkSession
+sc = SparkContext('local')
+spark = SparkSession(sc)
+
+
 airplanes = spark.read.json('data/airplanes.json')
 
 airplanes.registerTempTable("airplanes")
@@ -102,3 +108,5 @@ FROM
 
 # Store for later use, in place of airplanes.json
 resolved_airplanes.repartition(1).write.mode("overwrite").json("data/resolved_airplanes.json")
+
+spark.stop()

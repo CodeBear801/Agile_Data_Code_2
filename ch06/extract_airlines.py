@@ -1,3 +1,8 @@
+from pyspark.context import SparkContext
+from pyspark.sql.session import SparkSession
+sc = SparkContext('local')
+spark = SparkSession(sc)
+
 # Load the on-time parquet file
 on_time_dataframe = spark.read.parquet('data/on_time_performance.parquet')
 

@@ -1,3 +1,8 @@
+from pyspark.context import SparkContext
+from pyspark.sql.session import SparkSession
+sc = SparkContext('local')
+spark = SparkSession(sc)
+
 airplanes = spark.read.json('data/resolved_airplanes.json')
 
 #
@@ -75,3 +80,5 @@ pymongo_spark.activate()
 grouped_manufacturer_counts.saveToMongoDB(
   'mongodb://localhost:27017/agile_data_science.airplane_manufacturer_totals'
 )
+
+spark.stop()

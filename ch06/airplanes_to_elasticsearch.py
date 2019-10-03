@@ -3,7 +3,7 @@ airplanes = spark.read.json("data/airplanes.json")
 airplanes.show()
 
 airplanes.write.format("org.elasticsearch.spark.sql")\
-  .option("es.resource","agile_data_science/airplane")\
+  .option("es.resource","agile_data_science/airplanes")\
   .mode("overwrite")\
   .save()
 
