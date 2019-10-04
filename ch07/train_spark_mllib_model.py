@@ -9,6 +9,12 @@ from pyspark.sql.types import StringType, IntegerType, FloatType, DoubleType, Da
 from pyspark.sql.types import StructType, StructField
 from pyspark.sql.functions import udf
 
+from pyspark.context import SparkContext
+from pyspark.sql.session import SparkSession
+sc = SparkContext('local')
+spark = SparkSession(sc)
+
+
 schema = StructType([
   StructField("ArrDelay", DoubleType(), True),     # "ArrDelay":5.0
   StructField("CRSArrTime", TimestampType(), True),    # "CRSArrTime":"2015-12-31T03:20:00.000-08:00"
@@ -158,3 +164,5 @@ print("Accuracy = {}".format(accuracy))
 
 # Check a sample
 predictions.sample(False, 0.001, 18).orderBy("CRSDepTime").show(6)
+
+spark.stop()

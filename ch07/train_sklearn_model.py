@@ -126,7 +126,7 @@ print("Testing model persistance...")
 
 import pickle
 
-project_home = os.environ["PROJECT_HOME"]
+project_home = "/root" + os.environ["PROJECT_HOME"]
 
 # Dump the model itself
 regressor_path = "{}/models/sklearn_regressor.pkl".format(project_home)

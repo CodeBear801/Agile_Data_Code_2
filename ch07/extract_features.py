@@ -2,6 +2,12 @@ import sys, os, re
 import iso8601
 import datetime
 
+from pyspark.context import SparkContext
+from pyspark.sql.session import SparkSession
+sc = SparkContext('local')
+spark = SparkSession(sc)
+
+
 # Load the on-time parquet file
 on_time_dataframe = spark.read.parquet('data/on_time_performance.parquet')
 on_time_dataframe.registerTempTable("on_time_performance")
@@ -113,3 +119,5 @@ sorted_features.repartition(1).write.mode("overwrite").json("data/simple_flight_
 os.system("cp data/simple_flight_delay_features.json/part* data/simple_flight_delay_features.jsonl")
 os.system("bzip2 --best data/simple_flight_delay_features.jsonl")
 os.system("bzcat data/simple_flight_delay_features.jsonl.bz2 >> data/simple_flight_delay_features.jsonl")
+
+spark.stop()
