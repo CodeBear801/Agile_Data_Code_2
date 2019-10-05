@@ -293,9 +293,9 @@ def delays():
 
 # Load our regression model
 from sklearn.externals import joblib
-project_home = os.environ["PROJECT_HOME"]
-# vectorizer = joblib.load("{}/models/sklearn_vectorizer.pkl".format(project_home))
-# regressor = joblib.load("{}/models/sklearn_regressor.pkl".format(project_home))
+project_home = "/root" + os.environ["PROJECT_HOME"]
+vectorizer = joblib.load("{}/models/sklearn_vectorizer.pkl".format(project_home))
+regressor = joblib.load("{}/models/sklearn_regressor.pkl".format(project_home))
 
 # Make our API a post, so a search engine wouldn't hit it
 @app.route("/flights/delays/predict/regress", methods=['POST'])

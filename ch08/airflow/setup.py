@@ -12,7 +12,7 @@ default_args = {
   'owner': 'airflow',
   'depends_on_past': False,
   'start_date': iso8601.parse_date("2016-12-01"),
-  'email': ['russell.jurney@gmail.com'],
+  'email': ['liuxun801@gmail.com'],
   'email_on_failure': True,
   'email_on_retry': True,
   'retries': 3,

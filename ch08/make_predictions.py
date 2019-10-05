@@ -33,8 +33,11 @@ def main(iso_date, base_path):
   # Load all the string indexers into a dict
   from pyspark.ml.feature import StringIndexerModel
   
+  # for column in ["Carrier", "DayOfMonth", "DayOfWeek", "DayOfYear",
+  #                "Origin", "Dest", "Route"]:
+
   string_indexer_models = {}
-  for column in ["Carrier", "DayOfMonth", "DayOfWeek", "DayOfYear",
+  for column in ["Carrier",
                  "Origin", "Dest", "Route"]:
     string_indexer_model_path = "{}/models/string_indexer_model_{}.bin".format(
       base_path,
@@ -108,7 +111,7 @@ def main(iso_date, base_path):
   prediction_requests_with_route.show(6)
   
   # Index string fields with the corresponding indexer for that column
-  for column in ["Carrier", "DayOfMonth", "DayOfWeek", "DayOfYear",
+  for column in ["Carrier",
                  "Origin", "Dest", "Route"]:
     string_indexer_model = string_indexer_models[column]
     prediction_requests_with_route = string_indexer_model.transform(prediction_requests_with_route)
